@@ -1,0 +1,38 @@
+package oprecon;
+
+import java_cup.runtime.Symbol;
+
+parser code
+{:
+	private Symbol s;
+
+	public void syntax_error(Symbol s){
+		this.s = s;
+	}
+
+	public Symbol getS(){
+		return this.s;
+	}
+
+:};
+
+terminal TAB_SPACE, LITERAL, NEW_LINE_SPACE, ERROR;
+terminal String CALIFICATION;
+non terminal INICIO, SENTENCE, SENTENCE_LIST;
+
+start with INICIO;
+
+INICIO ::= SENTENCE_LIST
+;
+SENTENCE_LIST ::= SENTENCE |
+					SENTENCE NEW_LINE_SPACE SENTENCE |
+					SENTENCE NEW_LINE_SPACE SENTENCE NEW_LINE_SPACE SENTENCE |
+					SENTENCE NEW_LINE_SPACE SENTENCE NEW_LINE_SPACE SENTENCE NEW_LINE_SPACE SENTENCE |
+					SENTENCE NEW_LINE_SPACE SENTENCE NEW_LINE_SPACE SENTENCE NEW_LINE_SPACE SENTENCE NEW_LINE_SPACE SENTENCE
+;
+SENTENCE ::= CALIFICATION:calc_result TAB_SPACE LITERAL {:
+		if ( (Float.parseFloat(calc_result) < new Float(0)) && (Float.parseFloat(calc_result) > new Float(100)) ) {
+			parser.report_error("El número no es válido. Debe ser mayor que 0 y menor o igual que 100.", null);
+		}
+:}
+;
